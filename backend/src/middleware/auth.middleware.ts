@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import jwt, { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { prisma } from "../repository/prisma.client.js";
 import { HttpError } from "./error.middleware.js";
 
@@ -55,11 +55,11 @@ export const authMiddleware = async (
 
     next();
   } catch (error) {
-    if (error instanceof JsonWebTokenError) {
+    if (error instanceof jwt.JsonWebTokenError) {
       throw new HttpError(401, "유효하지 않은 토큰입니다.");
     }
 
-    if (error instanceof TokenExpiredError) {
+    if (error instanceof jwt.TokenExpiredError) {
       throw new HttpError(401, "만료된 토큰입니다.");
     }
 
