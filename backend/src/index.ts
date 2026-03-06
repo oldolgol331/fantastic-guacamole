@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import express, { Request, Response } from "express";
 import { corsConfig } from "./config/cors.config.js";
 import { boardRouter } from "./controller/board.controller.js";
+import { replyRouter } from "./controller/reply.controller.js";
 import { userRouter } from "./controller/user.controller.js";
 import { errorMiddleware } from "./middleware/error.middleware.js";
 import { disconnectPrisma } from "./repository/prisma.client.js";
@@ -25,6 +26,7 @@ app.get("/health", (_req: Request, res: Response) => {
 
 app.use("/api/users", userRouter);
 app.use("/api/boards", boardRouter);
+app.use("/api", replyRouter);
 
 app.use(errorMiddleware);
 
@@ -41,6 +43,7 @@ const server = app.listen(PORT, () => {
 ║  [API 엔드포인트]                                  ║
 ║  👤 User:  http://localhost:${PORT}/api/users         ║
 ║  📋 Board: http://localhost:${PORT}/api/boards        ║
+║  💬 Reply: http://localhost:${PORT}/api               ║
 ╚════════════════════════════════════════════════════╝
   `);
 });
