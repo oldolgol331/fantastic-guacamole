@@ -1,9 +1,10 @@
 import cors from "cors";
 import dotenv from "dotenv";
 import express, { Request, Response } from "express";
-import { corsConfig } from "./config/cors.config";
-import { errorMiddleware } from "./middleware/error.middleware";
-import { disconnectPrisma } from "./repository/prisma.client";
+import { corsConfig } from "./config/cors.config.js";
+import { userRouter } from "./controller/user.controller.js";
+import { errorMiddleware } from "./middleware/error.middleware.js";
+import { disconnectPrisma } from "./repository/prisma.client.js";
 
 dotenv.config();
 
@@ -20,6 +21,8 @@ app.get("/health", (_req: Request, res: Response) => {
     timestamp: new Date().toISOString(),
   });
 });
+
+app.use("/api/users", userRouter);
 
 app.use(errorMiddleware);
 
