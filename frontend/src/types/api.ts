@@ -67,6 +67,8 @@ export interface LoginResponseDto {
     id: number;
     email: string;
     nickname: string;
+    createdAt: string;
+    modifiedAt: string;
   };
 }
 

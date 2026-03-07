@@ -173,9 +173,16 @@ export class BoardService {
       throw new HttpError(403, "삭제 권한이 없습니다.");
     }
 
-    await prisma.board.delete({
-      where: { id },
-    });
+    // 트랜잭션을 사용하여 댓글 먼저 삭제 후 게시글 삭제
+    // (외래 키 제약조건 문제 해결)
+    await prisma.$transaction([
+      prisma.reply.deleteMany({
+        where: { boardId: id },
+      }),
+      prisma.board.delete({
+        where: { id },
+      }),
+    ]);
   }
 }
 

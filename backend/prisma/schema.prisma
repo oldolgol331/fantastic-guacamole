@@ -49,5 +49,5 @@ model Reply {
   author User @relation(fields: [authorId], references: [id])
 
   boardId Int
-  board Board @relation(fields: [boardId], references: [id])
+  board Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
 }

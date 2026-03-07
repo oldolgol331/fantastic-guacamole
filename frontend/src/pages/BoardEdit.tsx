@@ -18,11 +18,11 @@ export const BoardEdit = () => {
   const { showSuccess, showError } = useToast();
   const boardId = id ? parseInt(id, 10) : null;
 
-  const { values, handleChange, errors, setError, setErrors, setValues } =
+  const { values, handleChange, errors, setError, setErrors, setValues, isSubmitting, setErrorRef } =
     useForm({
       title: '',
       content: '',
-    });
+    }, undefined, { autoScroll: true });
 
   // 인증 확인
   if (!requireAuth()) {
@@ -145,8 +145,9 @@ export const BoardEdit = () => {
             onChange={handleChange}
             error={errors.title}
             placeholder="제목을 입력하세요"
-            disabled={updateMutation.isPending}
+            disabled={isSubmitting || updateMutation.isPending}
             maxLength={100}
+            ref={setErrorRef('title')}
           />
 
           <Textarea
@@ -156,8 +157,9 @@ export const BoardEdit = () => {
             onChange={handleChange}
             error={errors.content}
             placeholder="내용을 입력하세요"
-            disabled={updateMutation.isPending}
+            disabled={isSubmitting || updateMutation.isPending}
             rows={10}
+            ref={setErrorRef('content')}
           />
 
           <div className="flex justify-end gap-3 pt-4 border-t border-[var(--color-border)] mt-2">
@@ -165,14 +167,14 @@ export const BoardEdit = () => {
               type="button"
               variant="ghost"
               onClick={() => navigate(`/boards/${boardId}`)}
-              disabled={updateMutation.isPending}
+              disabled={isSubmitting || updateMutation.isPending}
             >
               취소
             </Button>
             <Button
               type="submit"
               variant="primary"
-              loading={updateMutation.isPending}
+              loading={isSubmitting || updateMutation.isPending}
             >
               수정하기
             </Button>

@@ -17,17 +17,21 @@ export const MyPage = () => {
   const { showSuccess, showError } = useToast();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
-  const { values, handleChange, errors, setError, setErrors, reset, setValues } = useForm({
+  const { values, handleChange, errors, setError, setErrors, reset, setValues, setErrorRef } = useForm({
     nickname: user?.nickname || '',
     newPassword: '',
     confirmNewPassword: '',
-  });
+  }, undefined, { autoScroll: true });
 
   // 인증 확인
   if (!isAuthenticated) {
     navigate('/login');
     return null;
   }
+
+  /**
+   * 정보 수정 뮤테이션
+   */
 
   /**
    * 정보 수정 뮤테이션
@@ -48,9 +52,9 @@ export const MyPage = () => {
       reset();
     },
     onError: (error: unknown) => {
-      if (error instanceof Error && 'response' in error) {
-        const axiosError = error as { response?: { data?: { message?: string } } };
-        showError(axiosError.response?.data?.message || '정보 수정 중 오류가 발생했습니다.');
+      // 구체적인 에러 메시지 표시
+      if (error instanceof Error) {
+        showError(error.message);
       } else {
         showError('정보 수정 중 오류가 발생했습니다.');
       }
@@ -198,6 +202,7 @@ export const MyPage = () => {
                 onChange={handleChange}
                 error={errors.nickname}
                 disabled={updateMutation.isPending}
+                ref={setErrorRef('nickname')}
               />
 
               <Input
@@ -209,6 +214,7 @@ export const MyPage = () => {
                 error={errors.newPassword}
                 placeholder="변경하지 않으려면 비워주세요"
                 disabled={updateMutation.isPending}
+                ref={setErrorRef('newPassword')}
               />
 
               <Input
@@ -220,6 +226,7 @@ export const MyPage = () => {
                 error={errors.confirmNewPassword}
                 placeholder="새 비밀번호 확인"
                 disabled={updateMutation.isPending}
+                ref={setErrorRef('confirmNewPassword')}
               />
 
               <div className="flex gap-3 justify-end pt-4 border-t border-[var(--color-border)] mt-2">

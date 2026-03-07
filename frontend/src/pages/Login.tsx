@@ -12,10 +12,11 @@ export const Login = () => {
   const navigate = useNavigate();
   const { handleLogin, isAuthenticated } = useAuth();
 
-  // Zod 스키마를 사용한 useForm
-  const { values, errors, handleChange, handleSubmit, isSubmitting } = useForm(
+  // Zod 스키마를 사용한 useForm (autoScroll: 에러 시 자동 스크롤)
+  const { values, errors, handleChange, handleSubmit, isSubmitting, setErrorRef } = useForm(
     { email: '', password: '' },
-    loginSchema
+    loginSchema,
+    { autoScroll: true }
   );
 
   // 이미 로그인한 경우 홈으로 리다이렉트
@@ -59,6 +60,7 @@ export const Login = () => {
               placeholder="email@example.com"
               autoComplete="email"
               disabled={isSubmitting}
+              ref={setErrorRef('email')}
             />
 
             <Input
@@ -71,6 +73,7 @@ export const Login = () => {
               placeholder="••••••••"
               autoComplete="current-password"
               disabled={isSubmitting}
+              ref={setErrorRef('password')}
             />
 
             <Button

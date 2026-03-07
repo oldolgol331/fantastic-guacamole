@@ -18,6 +18,8 @@ export const BoardDetail = () => {
   const { user, isAuthenticated } = useAuth();
   const { showError, showSuccess } = useToast();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isReplyDeleteModalOpen, setIsReplyDeleteModalOpen] = useState(false);
+  const [replyToDelete, setReplyToDelete] = useState<number | null>(null);
   const [newReply, setNewReply] = useState('');
   const [editingReplyId, setEditingReplyId] = useState<number | null>(null);
   const [editingContent, setEditingContent] = useState('');
@@ -108,11 +110,21 @@ export const BoardDetail = () => {
       refetchReplies();
       queryClient.invalidateQueries({ queryKey: ['board', boardId] });
       showSuccess('댓글이 삭제되었습니다.');
+      setIsReplyDeleteModalOpen(false);
+      setReplyToDelete(null);
     },
     onError: () => {
       showError('댓글 삭제 중 오류가 발생했습니다.');
     },
   });
+
+  /**
+   * 댓글 삭제 확인 핸들러
+   */
+  const handleConfirmDeleteReply = (replyId: number) => {
+    setReplyToDelete(replyId);
+    setIsReplyDeleteModalOpen(true);
+  };
 
   /**
    * 날짜 포맷팅
@@ -274,7 +286,7 @@ export const BoardDetail = () => {
                       </button>
                       <button
                         className="text-xs text-[var(--color-text-secondary)] bg-none border-none cursor-pointer p-0 transition-colors hover:text-[var(--color-text-primary)]"
-                        onClick={() => deleteReplyMutation.mutate(reply.id)}
+                        onClick={() => handleConfirmDeleteReply(reply.id)}
                       >
                         삭제
                       </button>
@@ -335,6 +347,43 @@ export const BoardDetail = () => {
         }
       >
         <p>정말로 이 게시글을 삭제하시겠습니까?</p>
+        <p className="text-[#ef4444] text-sm mt-2">이 작업은 되돌릴 수 없습니다.</p>
+      </Modal>
+
+      {/* 댓글 삭제 확인 모달 */}
+      <Modal
+        isOpen={isReplyDeleteModalOpen}
+        onClose={() => {
+          setIsReplyDeleteModalOpen(false);
+          setReplyToDelete(null);
+        }}
+        title="댓글 삭제"
+        footer={
+          <>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setIsReplyDeleteModalOpen(false);
+                setReplyToDelete(null);
+              }}
+            >
+              취소
+            </Button>
+            <Button
+              variant="danger"
+              onClick={() => {
+                if (replyToDelete) {
+                  deleteReplyMutation.mutate(replyToDelete);
+                }
+              }}
+              loading={deleteReplyMutation.isPending}
+            >
+              삭제
+            </Button>
+          </>
+        }
+      >
+        <p>정말로 이 댓글을 삭제하시겠습니까?</p>
         <p className="text-[#ef4444] text-sm mt-2">이 작업은 되돌릴 수 없습니다.</p>
       </Modal>
     </div>

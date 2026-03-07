@@ -37,9 +37,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   login: async (email: string, password: string) => {
     try {
       const response = await userApi.login({ email, password });
-      
+
       // 토큰 저장
       localStorage.setItem('accessToken', response.accessToken);
+      // 로그인 응답의 user 에 createdAt/modifiedAt 이 포함되므로 전체 저장
       localStorage.setItem('user', JSON.stringify(response.user));
 
       // 상태 업데이트
@@ -83,12 +84,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       // 서버에서 사용자 정보 다시 조회 (토큰 유효성 확인)
       const userData = await userApi.getMyInfo();
-      
+
       set({
         user: {
           id: userData.id,
           email: userData.email,
           nickname: userData.nickname,
+          createdAt: userData.createdAt,
+          modifiedAt: userData.modifiedAt,
         },
         isAuthenticated: true,
         isLoading: false,
@@ -99,6 +102,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         id: userData.id,
         email: userData.email,
         nickname: userData.nickname,
+        createdAt: userData.createdAt,
+        modifiedAt: userData.modifiedAt,
       }));
     } catch (error) {
       // 토큰 만료 또는 유효하지 않음

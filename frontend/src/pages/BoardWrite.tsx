@@ -5,7 +5,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../hooks/useToast';
 import { useForm } from '../hooks/useForm';
 import { createBoardSchema } from '../types';
-import { Button, Input, Textarea } from '../components';
+import { Button, Input, Textarea, CharacterCounter } from '../components';
 
 /**
  * 게시글 작성 페이지
@@ -16,10 +16,11 @@ export const BoardWrite = () => {
   const { requireAuth } = useAuth();
   const { showSuccess, showError } = useToast();
 
-  // Zod 스키마를 사용한 useForm
-  const { values, errors, handleChange, handleSubmit, isSubmitting } = useForm(
+  // Zod 스키마를 사용한 useForm (autoScroll: 에러 시 자동 스크롤)
+  const { values, errors, handleChange, handleSubmit, isSubmitting, setErrorRef } = useForm(
     { title: '', content: '' },
-    createBoardSchema
+    createBoardSchema,
+    { autoScroll: true }
   );
 
   // 인증 확인
@@ -75,7 +76,9 @@ export const BoardWrite = () => {
             placeholder="제목을 입력하세요"
             disabled={isSubmitting || createMutation.isPending}
             maxLength={100}
+            ref={setErrorRef('title')}
           />
+          <CharacterCounter value={values.title} maxLength={100} label="제목" />
 
           <Textarea
             label="내용"
@@ -86,7 +89,9 @@ export const BoardWrite = () => {
             placeholder="내용을 입력하세요"
             disabled={isSubmitting || createMutation.isPending}
             rows={10}
+            ref={setErrorRef('content')}
           />
+          <CharacterCounter value={values.content} minLength={1} label="내용" />
 
           <div className="flex justify-end gap-3 pt-4 border-t border-[var(--color-border)] mt-2">
             <Button

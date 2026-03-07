@@ -84,6 +84,8 @@ export class UserService {
         email: true,
         password: true,
         nickname: true,
+        createdAt: true,
+        modifiedAt: true,
       },
     });
     if (!user) {
@@ -114,6 +116,8 @@ export class UserService {
         id: user.id,
         email: user.email,
         nickname: user.nickname,
+        createdAt: user.createdAt.toISOString(),
+        modifiedAt: user.modifiedAt.toISOString(),
       },
     };
   }

@@ -3,7 +3,7 @@ import { userApi } from '../services';
 import { useToast } from '../hooks/useToast';
 import { useForm } from '../hooks/useForm';
 import { signUpSchema } from '../types';
-import { Button, Input } from '../components';
+import { Button, Input, PasswordStrength } from '../components';
 
 /**
  * 회원가입 페이지
@@ -13,15 +13,16 @@ export const Signup = () => {
   const navigate = useNavigate();
   const { showSuccess, showError } = useToast();
 
-  // Zod 스키마를 사용한 useForm
-  const { values, errors, handleChange, handleSubmit, isSubmitting } = useForm(
+  // Zod 스키마를 사용한 useForm (autoScroll: 에러 시 자동 스크롤)
+  const { values, errors, handleChange, handleSubmit, isSubmitting, setErrorRef } = useForm(
     {
       email: '',
       nickname: '',
       password: '',
       confirmPassword: '',
     },
-    signUpSchema
+    signUpSchema,
+    { autoScroll: true }
   );
 
   /**
@@ -39,9 +40,9 @@ export const Signup = () => {
       showSuccess('회원가입이 완료되었습니다! 로그인해주세요.');
       navigate('/login');
     } catch (error: unknown) {
-      if (error instanceof Error && 'response' in error) {
-        const axiosError = error as { response?: { data?: { message?: string } } };
-        showError(axiosError.response?.data?.message || '회원가입 중 오류가 발생했습니다.');
+      // 구체적인 에러 메시지 표시
+      if (error instanceof Error) {
+        showError(error.message);
       } else {
         showError('회원가입 중 오류가 발생했습니다.');
       }
@@ -76,6 +77,7 @@ export const Signup = () => {
               placeholder="email@example.com"
               autoComplete="email"
               disabled={isSubmitting}
+              ref={setErrorRef('email')}
             />
 
             <Input
@@ -88,6 +90,7 @@ export const Signup = () => {
               placeholder="닉네임"
               autoComplete="nickname"
               disabled={isSubmitting}
+              ref={setErrorRef('nickname')}
             />
 
             <Input
@@ -100,6 +103,12 @@ export const Signup = () => {
               placeholder="••••••••"
               autoComplete="new-password"
               disabled={isSubmitting}
+              ref={setErrorRef('password')}
+            />
+            <PasswordStrength 
+              password={values.password} 
+              confirmPassword={values.confirmPassword}
+              showMatch={true}
             />
 
             <Input
@@ -112,6 +121,7 @@ export const Signup = () => {
               placeholder="••••••••"
               autoComplete="new-password"
               disabled={isSubmitting}
+              ref={setErrorRef('confirmPassword')}
             />
 
             <Button
