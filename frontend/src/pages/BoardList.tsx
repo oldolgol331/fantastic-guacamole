@@ -4,10 +4,10 @@ import { useQuery } from '@tanstack/react-query';
 import { boardApi } from '../services';
 import { Input, Button, LoadingSpinner } from '../components';
 import type { BoardSummaryDto } from '../types';
-import './BoardList.css';
 
 /**
  * 게시글 목록 페이지
+ * TailwindCSS 유틸리티 클래스 사용
  */
 export const BoardList = () => {
   const [page, setPage] = useState(1);
@@ -52,30 +52,30 @@ export const BoardList = () => {
 
   if (error) {
     return (
-      <div className="board-list-error">
-        <p>게시글을 불러오는 중 오류가 발생했습니다.</p>
+      <div className="text-center py-16 text-[var(--color-text-secondary)]">
+        <p className="mb-4">게시글을 불러오는 중 오류가 발생했습니다.</p>
         <Button onClick={() => refetch()}>다시 시도</Button>
       </div>
     );
   }
 
   return (
-    <div className="board-list-page">
-      <div className="board-list-header">
-        <h1 className="board-list-title">게시판</h1>
+    <div className="max-w-[900px] mx-auto px-6 py-8">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-[2.75rem] font-bold text-[var(--color-text-primary)] m-0">게시판</h1>
         <Link to="/boards/write">
           <Button variant="primary">글쓰기</Button>
         </Link>
       </div>
 
       {/* 검색 폼 */}
-      <form onSubmit={handleSearch} className="board-search-form">
+      <form onSubmit={handleSearch} className="flex gap-3 mb-6">
         <Input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="검색어를 입력하세요..."
-          className="board-search-input"
+          className="flex-1"
         />
         <Button type="submit" variant="secondary">
           검색
@@ -84,15 +84,15 @@ export const BoardList = () => {
 
       {/* 게시글 목록 */}
       {isLoading ? (
-        <div className="board-list-loading">
+        <div className="flex justify-center py-16">
           <LoadingSpinner size="lg" />
         </div>
       ) : (
         <>
-          <div className="board-list">
+          <div className="flex flex-col gap-3">
             {data?.boards.length === 0 ? (
-              <div className="board-empty">
-                <p>게시글이 없습니다.</p>
+              <div className="text-center py-16 text-[var(--color-text-secondary)]">
+                <p className="mb-6">게시글이 없습니다.</p>
                 <Link to="/boards/write">
                   <Button variant="primary">첫 번째 글쓰기</Button>
                 </Link>
@@ -102,20 +102,22 @@ export const BoardList = () => {
                 <Link
                   key={board.id}
                   to={`/boards/${board.id}`}
-                  className="board-card"
+                  className="flex justify-between items-center px-5 py-5 bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-xl no-underline transition-all duration-200 hover:border-[#667eea] hover:translate-x-1"
                 >
-                  <div className="board-card-content">
-                    <h3 className="board-title">{board.title}</h3>
-                    <div className="board-meta">
-                      <span className="board-author">{board.authorNickname}</span>
-                      <span className="board-date">{formatDate(board.createdAt)}</span>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-base font-semibold text-[var(--color-text-primary)] m-0 mb-2 whitespace-nowrap overflow-hidden text-ellipsis">
+                      {board.title}
+                    </h3>
+                    <div className="flex gap-4 text-sm text-[var(--color-text-secondary)]">
+                      <span className="font-medium">{board.authorNickname}</span>
+                      <span>{formatDate(board.createdAt)}</span>
                     </div>
                   </div>
-                  <div className="board-card-stats">
-                    <span className="board-stat">
+                  <div className="flex gap-4 flex-shrink-0 ml-4">
+                    <span className="text-sm text-[var(--color-text-secondary)] whitespace-nowrap">
                       💬 {board.replyCount}
                     </span>
-                    <span className="board-stat">
+                    <span className="text-sm text-[var(--color-text-secondary)] whitespace-nowrap">
                       👁️ {board.views}
                     </span>
                   </div>
@@ -126,7 +128,7 @@ export const BoardList = () => {
 
           {/* 페이지네이션 */}
           {data && data.pagination.totalPages > 1 && (
-            <div className="board-pagination">
+            <div className="flex justify-center items-center gap-4 mt-8">
               <Button
                 variant="secondary"
                 size="sm"
@@ -135,7 +137,7 @@ export const BoardList = () => {
               >
                 이전
               </Button>
-              <span className="pagination-info">
+              <span className="text-[15px] text-[var(--color-text-primary)] font-medium min-w-[80px] text-center">
                 {page} / {data.pagination.totalPages}
               </span>
               <Button

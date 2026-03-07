@@ -1,13 +1,13 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { useUIStore } from '../stores/uiStore';
-import './Header.css';
 
 /**
  * 헤더 컴포넌트
  * - 로고 및 네비게이션
  * - 다크 모드 토글
  * - 인증 상태에 따른 메뉴 표시
+ * TailwindCSS 유틸리티 클래스 사용
  */
 export const Header = () => {
   const navigate = useNavigate();
@@ -21,40 +21,42 @@ export const Header = () => {
   };
 
   return (
-    <header className="header">
-      <div className="header-container">
+    <header className="sticky top-0 z-[100] bg-[var(--color-bg-primary)] border-b border-[var(--color-border)] backdrop-blur-xl">
+      <div className="max-w-[1200px] mx-auto px-6 py-4 flex items-center justify-between gap-4">
         {/* 로고 */}
-        <Link to="/" className="header-logo">
-          <span className="logo-icon">🥑</span>
-          <span className="logo-text">Fantastic Guacamole</span>
+        <Link to="/" className="flex items-center gap-2 text-decoration-none text-[var(--color-text-primary)] font-bold text-lg">
+          <span className="text-2xl">🥑</span>
+          <span className="bg-gradient-to-r from-[#667eea] to-[#764ba2] bg-clip-text text-transparent">
+            Fantastic Guacamole
+          </span>
         </Link>
 
         {/* 데스크톱 네비게이션 */}
-        <nav className="header-nav desktop-nav">
-          <Link to="/boards" className="nav-link">
+        <nav className="hidden md:flex items-center gap-1">
+          <Link to="/boards" className="px-4 py-2 text-[var(--color-text-secondary)] rounded-lg font-medium hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] transition-all">
             게시판
           </Link>
           {isAuthenticated ? (
             <>
-              <Link to="/mypage" className="nav-link">
+              <Link to="/mypage" className="px-4 py-2 text-[var(--color-text-secondary)] rounded-lg font-medium hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] transition-all">
                 내 정보
               </Link>
-              <Link to="/boards/write" className="nav-link btn-primary-small">
+              <Link to="/boards/write" className="px-4 py-2 bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white rounded-lg font-medium hover:opacity-90 transition-all">
                 글쓰기
               </Link>
-              <div className="user-menu">
-                <span className="user-nickname">{user?.nickname}</span>
-                <button onClick={handleLogout} className="logout-btn">
+              <div className="flex items-center gap-3 ml-2">
+                <span className="text-[var(--color-text-primary)] font-medium">{user?.nickname}</span>
+                <button onClick={handleLogout} className="px-3 py-1.5 text-sm bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-md text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-tertiary)] hover:text-[var(--color-text-primary)] transition-all">
                   로그아웃
                 </button>
               </div>
             </>
           ) : (
             <>
-              <Link to="/login" className="nav-link">
+              <Link to="/login" className="px-4 py-2 text-[var(--color-text-secondary)] rounded-lg font-medium hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] transition-all">
                 로그인
               </Link>
-              <Link to="/signup" className="nav-link btn-primary-small">
+              <Link to="/signup" className="px-4 py-2 bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white rounded-lg font-medium hover:opacity-90 transition-all">
                 회원가입
               </Link>
             </>
@@ -62,11 +64,11 @@ export const Header = () => {
         </nav>
 
         {/* 우측 액션 */}
-        <div className="header-actions">
+        <div className="flex items-center gap-2">
           {/* 다크 모드 토글 */}
           <button
             onClick={toggleDarkMode}
-            className="theme-toggle"
+            className="p-2 bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-lg text-[var(--color-text-primary)] hover:bg-[var(--color-bg-tertiary)] transition-all"
             aria-label="다크 모드 토글"
           >
             {isDarkMode ? (
@@ -83,7 +85,7 @@ export const Header = () => {
           {/* 모바일 메뉴 토글 */}
           <button
             onClick={toggleMobileMenu}
-            className="mobile-menu-btn"
+            className="md:hidden p-2 bg-transparent border-none text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] rounded-lg transition-all"
             aria-label="메뉴 토글"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -99,40 +101,28 @@ export const Header = () => {
 
       {/* 모바일 네비게이션 */}
       {isMobileMenuOpen && (
-        <nav className="header-nav mobile-nav">
-          <Link to="/boards" className="nav-link" onClick={toggleMobileMenu}>
+        <nav className="flex flex-col px-6 py-4 border-t border-[var(--color-border)] md:hidden">
+          <Link to="/boards" className="px-4 py-2 text-[var(--color-text-secondary)] rounded-lg font-medium hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] transition-all" onClick={toggleMobileMenu}>
             게시판
           </Link>
           {isAuthenticated ? (
             <>
-              <Link
-                to="/mypage"
-                className="nav-link"
-                onClick={toggleMobileMenu}
-              >
+              <Link to="/mypage" className="px-4 py-2 text-[var(--color-text-secondary)] rounded-lg font-medium hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] transition-all" onClick={toggleMobileMenu}>
                 내 정보
               </Link>
-              <Link
-                to="/boards/write"
-                className="nav-link"
-                onClick={toggleMobileMenu}
-              >
+              <Link to="/boards/write" className="px-4 py-2 text-[var(--color-text-secondary)] rounded-lg font-medium hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] transition-all" onClick={toggleMobileMenu}>
                 글쓰기
               </Link>
-              <button onClick={handleLogout} className="nav-link logout-link">
+              <button onClick={handleLogout} className="px-4 py-2 text-left text-[var(--color-text-secondary)] rounded-lg font-medium hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] transition-all w-full">
                 로그아웃
               </button>
             </>
           ) : (
             <>
-              <Link to="/login" className="nav-link" onClick={toggleMobileMenu}>
+              <Link to="/login" className="px-4 py-2 text-[var(--color-text-secondary)] rounded-lg font-medium hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] transition-all" onClick={toggleMobileMenu}>
                 로그인
               </Link>
-              <Link
-                to="/signup"
-                className="nav-link"
-                onClick={toggleMobileMenu}
-              >
+              <Link to="/signup" className="px-4 py-2 text-[var(--color-text-secondary)] rounded-lg font-medium hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] transition-all" onClick={toggleMobileMenu}>
                 회원가입
               </Link>
             </>

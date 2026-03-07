@@ -6,10 +6,10 @@ import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../hooks/useToast';
 import { useForm } from '../hooks/useForm';
 import { Button, Input, Textarea, LoadingSpinner } from '../components';
-import './BoardForm.css';
 
 /**
  * 게시글 수정 페이지
+ * TailwindCSS 유틸리티 클래스 사용
  */
 export const BoardEdit = () => {
   const { id } = useParams<{ id: string }>();
@@ -76,7 +76,7 @@ export const BoardEdit = () => {
 
   if (isLoading) {
     return (
-      <div className="board-form-loading">
+      <div className="min-h-[calc(100vh-80px)] flex items-center justify-center">
         <LoadingSpinner size="lg" fullScreen />
       </div>
     );
@@ -84,8 +84,8 @@ export const BoardEdit = () => {
 
   if (error || !board) {
     return (
-      <div className="board-form-error">
-        <p>게시글을 찾을 수 없습니다.</p>
+      <div className="text-center py-16 text-[var(--color-text-secondary)]">
+        <p className="mb-4">게시글을 찾을 수 없습니다.</p>
         <Button onClick={() => navigate(`/boards/${boardId}`)}>
           돌아가기
         </Button>
@@ -131,11 +131,13 @@ export const BoardEdit = () => {
   };
 
   return (
-    <div className="board-form-page">
-      <div className="board-form-container">
-        <h1 className="board-form-title">게시글 수정</h1>
+    <div className="max-w-[800px] mx-auto px-6 py-8">
+      <div className="bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-2xl p-8">
+        <h1 className="text-2xl font-bold text-[var(--color-text-primary)] m-0 mb-6">
+          게시글 수정
+        </h1>
 
-        <form onSubmit={handleSubmit} className="board-form">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <Input
             label="제목"
             name="title"
@@ -158,7 +160,7 @@ export const BoardEdit = () => {
             rows={10}
           />
 
-          <div className="board-form-actions">
+          <div className="flex justify-end gap-3 pt-4 border-t border-[var(--color-border)] mt-2">
             <Button
               type="button"
               variant="ghost"

@@ -1,10 +1,15 @@
 /* ============================================
    Fantastic Guacamole - Global Styles
-   다크 모드 지원 CSS 변수 기반 스타일
+   TailwindCSS 기반 다크 모드 지원
    ============================================ */
 
-/* CSS 변수 정의 (라이트 모드 - 기본값) */
-:root {
+@import "tailwindcss";
+
+/* ============================================
+   커스텀 테마 설정 (CSS Variables)
+   ============================================ */
+
+@theme {
   /* 색상 팔레트 */
   --color-primary: #667eea;
   --color-primary-dark: #764ba2;
@@ -14,170 +19,196 @@
   --color-info: #3b82f6;
 
   /* 배경색 */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8fafc;
-  --bg-tertiary: #f1f5f9;
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f8fafc;
+  --color-bg-tertiary: #f1f5f9;
 
   /* 텍스트 색상 */
-  --text-primary: #1e293b;
-  --text-secondary: #64748b;
-  --text-tertiary: #94a3b8;
+  --color-text-primary: #1e293b;
+  --color-text-secondary: #64748b;
+  --color-text-tertiary: #94a3b8;
 
   /* 보더 색상 */
-  --border-color: #e2e8f0;
+  --color-border: #e2e8f0;
 
-  /* 그림자 */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-  --shadow-xl: 0 25px 50px rgba(0, 0, 0, 0.15);
-
-  /* 타이포그래피 */
+  /* 폰트 */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
     'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
   --font-mono: 'Fira Code', 'Consolas', 'Monaco', 'Andale Mono', monospace;
 
-  /* 전환 효과 */
-  --transition-fast: 150ms ease;
-  --transition-normal: 250ms ease;
-  --transition-slow: 350ms ease;
-
-  /* 보더 반경 */
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-  --radius-2xl: 1.5rem;
-}
-
-/* 다크 모드 CSS 변수 */
-:root.dark {
-  /* 배경색 - 다크 */
-  --bg-primary: #0f172a;
-  --bg-secondary: #1e293b;
-  --bg-tertiary: #334155;
-
-  /* 텍스트 색상 - 다크 */
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-tertiary: #64748b;
-
-  /* 보더 색상 - 다크 */
-  --border-color: #334155;
-
-  /* 그림자 - 다크 */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
-  --shadow-xl: 0 25px 50px rgba(0, 0, 0, 0.6);
+  /* 애니메이션 */
+  --animate-fade-in: fadeIn 250ms ease;
+  --animate-fade-in-up: fadeInUp 350ms ease;
 }
 
 /* ============================================
-   리셋 및 기본 스타일
+   다크 모드 테마
    ============================================ */
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+@layer base {
+  :root.dark {
+    /* 배경색 - 다크 */
+    --color-bg-primary: #0f172a;
+    --color-bg-secondary: #1e293b;
+    --color-bg-tertiary: #334155;
 
-html {
-  font-size: 16px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-}
+    /* 텍스트 색상 - 다크 */
+    --color-text-primary: #f1f5f9;
+    --color-text-secondary: #94a3b8;
+    --color-text-tertiary: #64748b;
 
-body {
-  font-family: var(--font-family);
-  font-size: 1rem;
-  line-height: 1.6;
-  color: var(--text-primary);
-  background-color: var(--bg-primary);
-  transition: background-color var(--transition-normal),
-    color var(--transition-normal);
+    /* 보더 색상 - 다크 */
+    --color-border: #334155;
+  }
 }
 
 /* ============================================
-   타이포그래피
+   전역 스타일 및 리셋
    ============================================ */
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-weight: 700;
-  line-height: 1.2;
-  color: var(--text-primary);
-}
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
-h1 {
-  font-size: clamp(1.75rem, 4vw, 2.5rem);
-}
+  html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
 
-h2 {
-  font-size: clamp(1.5rem, 3vw, 2rem);
-}
+  body {
+    font-family: var(--font-family);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--color-text-primary);
+    background-color: var(--color-bg-primary);
+    transition: background-color 250ms ease, color 250ms ease;
+  }
 
-h3 {
-  font-size: clamp(1.25rem, 2vw, 1.5rem);
-}
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--color-text-primary);
+  }
 
-p {
-  margin-bottom: 1rem;
-}
+  h1 {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+  }
 
-a {
-  color: var(--color-primary);
-  text-decoration: none;
-  transition: color var(--transition-fast);
-}
+  h2 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+  }
 
-a:hover {
-  color: var(--color-primary-dark);
+  h3 {
+    font-size: clamp(1.25rem, 2vw, 1.5rem);
+  }
+
+  p {
+    margin-bottom: 1rem;
+  }
+
+  a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color 150ms ease;
+  }
+
+  a:hover {
+    color: var(--color-primary-dark);
+  }
+
+  /* 스크롤바 커스텀 */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-bg-secondary);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-secondary);
+  }
+
+  /* 전역 포커스 스타일 */
+  *:focus-visible {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+  }
+
+  /* 링크 스타일 초기화 */
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* 버튼 초기화 */
+  button {
+    font-family: inherit;
+  }
+
+  /* 입력 필드 초기화 */
+  input,
+  textarea {
+    font-family: inherit;
+  }
 }
 
 /* ============================================
    유틸리티 클래스
    ============================================ */
 
-.container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1.5rem;
-}
+@layer utilities {
+  .container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
 
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
 
-.text-center {
-  text-align: center;
-}
+  .text-center {
+    text-align: center;
+  }
 
-.text-gradient {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  .text-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 }
 
 /* ============================================
-   애니메이션
+   키프레임 애니메이션
    ============================================ */
 
 @keyframes fadeIn {
@@ -210,23 +241,47 @@ a:hover {
   }
 }
 
-.animate-fade-in {
-  animation: fadeIn var(--transition-normal) ease;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-.animate-fade-in-up {
-  animation: fadeInUp var(--transition-slow) ease;
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 /* ============================================
-   반응형 브레이크포인트
+   반응형
    ============================================ */
-
-/* 
-  모바일: < 640px
-  태블릿: 640px - 1024px
-  데스크톱: > 1024px
-*/
 
 @media (max-width: 640px) {
   :root {

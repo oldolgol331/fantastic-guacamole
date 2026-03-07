@@ -6,10 +6,10 @@ import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../hooks/useToast';
 import { useForm } from '../hooks/useForm';
 import { Button, Input, Modal } from '../components';
-import './MyPage.css';
 
 /**
  * 내 정보 페이지 (마이페이지)
+ * TailwindCSS 유틸리티 클래스 사용
  */
 export const MyPage = () => {
   const navigate = useNavigate();
@@ -148,38 +148,38 @@ export const MyPage = () => {
   };
 
   return (
-    <div className="mypage-page">
-      <div className="mypage-container">
-        <h1 className="mypage-title">내 정보</h1>
+    <div className="max-w-[600px] mx-auto px-6 py-8">
+      <div className="flex flex-col gap-6">
+        <h1 className="text-[2.75rem] font-bold text-[var(--color-text-primary)] m-0">내 정보</h1>
 
-        <div className="mypage-card">
+        <div className="bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-2xl p-8">
           {!isEditMode ? (
             /* 읽기 모드 */
             <>
-              <div className="mypage-info">
-                <div className="info-row">
-                  <label className="info-label">이메일</label>
-                  <span className="info-value">{user?.email}</span>
+              <div className="flex flex-col gap-5 mb-6">
+                <div className="flex justify-between items-center py-4 border-b border-[var(--color-border)] last:border-b-0 last:pb-0">
+                  <label className="text-[15px] text-[var(--color-text-secondary)] font-medium">이메일</label>
+                  <span className="text-[15px] text-[var(--color-text-primary)] font-medium">{user?.email}</span>
                 </div>
-                <div className="info-row">
-                  <label className="info-label">닉네임</label>
-                  <span className="info-value">{user?.nickname}</span>
+                <div className="flex justify-between items-center py-4 border-b border-[var(--color-border)] last:border-b-0 last:pb-0">
+                  <label className="text-[15px] text-[var(--color-text-secondary)] font-medium">닉네임</label>
+                  <span className="text-[15px] text-[var(--color-text-primary)] font-medium">{user?.nickname}</span>
                 </div>
-                <div className="info-row">
-                  <label className="info-label">가입일</label>
-                  <span className="info-value">
+                <div className="flex justify-between items-center py-4 border-b border-[var(--color-border)] last:border-b-0 last:pb-0">
+                  <label className="text-[15px] text-[var(--color-text-secondary)] font-medium">가입일</label>
+                  <span className="text-[15px] text-[var(--color-text-primary)] font-medium">
                     {user?.createdAt ? formatDate(user.createdAt) : '-'}
                   </span>
                 </div>
-                <div className="info-row">
-                  <label className="info-label">최근 수정일</label>
-                  <span className="info-value">
+                <div className="flex justify-between items-center py-4 border-b border-[var(--color-border)] last:border-b-0 last:pb-0">
+                  <label className="text-[15px] text-[var(--color-text-secondary)] font-medium">최근 수정일</label>
+                  <span className="text-[15px] text-[var(--color-text-primary)] font-medium">
                     {user?.modifiedAt ? formatDate(user.modifiedAt) : '-'}
                   </span>
                 </div>
               </div>
 
-              <div className="mypage-actions">
+              <div className="flex gap-3 justify-end pt-6 border-t border-[var(--color-border)]">
                 <Button variant="secondary" onClick={handleEditStart}>
                   정보 수정
                 </Button>
@@ -190,7 +190,7 @@ export const MyPage = () => {
             </>
           ) : (
             /* 수정 모드 */
-            <form onSubmit={handleSubmit} className="mypage-form">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
               <Input
                 label="닉네임"
                 name="nickname"
@@ -222,7 +222,7 @@ export const MyPage = () => {
                 disabled={updateMutation.isPending}
               />
 
-              <div className="mypage-form-actions">
+              <div className="flex gap-3 justify-end pt-4 border-t border-[var(--color-border)] mt-2">
                 <Button
                   type="button"
                   variant="ghost"
@@ -243,7 +243,7 @@ export const MyPage = () => {
           )}
         </div>
 
-        <div className="mypage-back">
+        <div className="flex justify-center">
           <Button variant="ghost" onClick={() => navigate(-1)}>
             ← 돌아가기
           </Button>
@@ -271,7 +271,7 @@ export const MyPage = () => {
         }
       >
         <p>정말로 회원탈퇴하시겠습니까?</p>
-        <p className="modal-warning">
+        <p className="text-[#ef4444] text-sm mt-2">
           이 작업은 되돌릴 수 없으며, 모든 데이터가 삭제됩니다.
         </p>
       </Modal>

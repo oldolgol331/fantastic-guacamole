@@ -3,10 +3,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useForm } from '../hooks/useForm';
 import { Button, Input } from '../components';
-import './Auth.css';
 
 /**
  * 로그인 페이지
+ * TailwindCSS 유틸리티 클래스 사용
  */
 export const Login = () => {
   const navigate = useNavigate();
@@ -67,13 +67,17 @@ export const Login = () => {
   };
 
   return (
-    <div className="auth-page">
-      <div className="auth-container">
-        <div className="auth-card">
-          <h1 className="auth-title">로그인</h1>
-          <p className="auth-subtitle">환영합니다!</p>
+    <div className="min-h-[calc(100vh-80px)] flex items-center justify-center px-4 py-8">
+      <div className="w-full max-w-[420px]">
+        <div className="bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-[2rem] p-10 shadow-[0_4px_24px_rgba(0,0,0,0.06)]">
+          <h1 className="text-[2.75rem] font-bold text-[var(--color-text-primary)] text-center mb-2">
+            로그인
+          </h1>
+          <p className="text-[15px] text-[var(--color-text-secondary)] text-center mb-8">
+            환영합니다!
+          </p>
 
-          <form onSubmit={handleSubmit} className="auth-form">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             <Input
               label="이메일"
               type="email"
@@ -109,10 +113,10 @@ export const Login = () => {
             </Button>
           </form>
 
-          <div className="auth-footer">
+          <div className="mt-6 text-center text-[var(--color-text-secondary)] text-[15px]">
             <p>
               계정이 없으신가요?{' '}
-              <Link to="/signup" className="auth-link">
+              <Link to="/signup" className="text-[#667eea] font-semibold hover:underline">
                 회원가입
               </Link>
             </p>

@@ -5,10 +5,10 @@ import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../hooks/useToast';
 import { useForm } from '../hooks/useForm';
 import { Button, Input, Textarea } from '../components';
-import './BoardForm.css';
 
 /**
  * 게시글 작성 페이지
+ * TailwindCSS 유틸리티 클래스 사용
  */
 export const BoardWrite = () => {
   const navigate = useNavigate();
@@ -77,11 +77,13 @@ export const BoardWrite = () => {
   };
 
   return (
-    <div className="board-form-page">
-      <div className="board-form-container">
-        <h1 className="board-form-title">새 게시글 작성</h1>
+    <div className="max-w-[800px] mx-auto px-6 py-8">
+      <div className="bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-2xl p-8">
+        <h1 className="text-2xl font-bold text-[var(--color-text-primary)] m-0 mb-6">
+          새 게시글 작성
+        </h1>
 
-        <form onSubmit={handleSubmit} className="board-form">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <Input
             label="제목"
             name="title"
@@ -104,7 +106,7 @@ export const BoardWrite = () => {
             rows={10}
           />
 
-          <div className="board-form-actions">
+          <div className="flex justify-end gap-3 pt-4 border-t border-[var(--color-border)] mt-2">
             <Button
               type="button"
               variant="ghost"

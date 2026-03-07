@@ -17,7 +17,6 @@ import {
   MyPage,
 } from './pages';
 import { useAuthStore } from './stores/authStore';
-import './App.css';
 
 /**
  * TanStack Query 클라이언트 설정
@@ -46,7 +45,7 @@ const AuthInitializer = ({ children }: { children: React.ReactNode }) => {
 
   if (isLoading) {
     return (
-      <div className="app-loading">
+      <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg-primary)]">
         <LoadingSpinner size="lg" />
       </div>
     );
@@ -60,9 +59,9 @@ const AuthInitializer = ({ children }: { children: React.ReactNode }) => {
  */
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="app-layout">
+    <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="app-main">{children}</main>
+      <main className="flex-1 w-full">{children}</main>
       <Toast />
     </div>
   );
