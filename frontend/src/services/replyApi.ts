@@ -1,6 +1,5 @@
 import apiClient from './api';
 import type {
-  CreateReplyRequestDto,
   UpdateReplyRequestDto,
   ReplyListResponseDto,
 } from '../types';
@@ -22,7 +21,7 @@ export const replyApi = {
    */
   createReply: async (
     boardId: number,
-    data: CreateReplyRequestDto
+    data: { content: string }
   ): Promise<{ id: number }> => {
     const response = await apiClient.post(`/boards/${boardId}/replies`, data);
     return response.data.data;

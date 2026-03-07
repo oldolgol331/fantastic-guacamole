@@ -1,21 +1,54 @@
+import { z } from 'zod';
+
+// ============================================
+// Zod 스키마 정의
+// ============================================
+
+/** 회원가입 검증 스키마 */
+export const signUpSchema = z
+  .object({
+    email: z.string().email('올바른 이메일 형식이 아닙니다.'),
+    password: z.string().min(8, '비밀번호는 8 자 이상이어야 합니다.'),
+    confirmPassword: z.string(),
+    nickname: z
+      .string()
+      .min(2, '닉네임은 2 자 이상이어야 합니다.')
+      .max(20, '닉네임은 20 자 이하여야 합니다.'),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: '비밀번호가 일치하지 않습니다.',
+    path: ['confirmPassword'],
+  });
+
+/** 로그인 검증 스키마 */
+export const loginSchema = z.object({
+  email: z.string().email('올바른 이메일 형식이 아닙니다.'),
+  password: z.string().min(1, '비밀번호를 입력해주세요.'),
+});
+
+/** 게시글 생성 검증 스키마 */
+export const createBoardSchema = z.object({
+  title: z.string().min(1, '제목을 입력해주세요.').max(100, '제목은 100 자 이하여야 합니다.'),
+  content: z.string().min(1, '내용을 입력해주세요.'),
+});
+
+/** 댓글 생성 검증 스키마 */
+export const createReplySchema = z.object({
+  content: z.string().min(1, '댓글 내용을 입력해주세요.'),
+});
+
+// ============================================
+// 타입 정의 (Zod 스키마에서 추론)
+// ============================================
+
+export type SignUpRequestDto = z.infer<typeof signUpSchema>;
+export type LoginRequestDto = z.infer<typeof loginSchema>;
+export type CreateBoardRequestDto = z.infer<typeof createBoardSchema>;
+
 // ============================================
 // User 관련 타입 정의
 // 백엔드 DTO 에 대응하는 프론트엔드 인터페이스
 // ============================================
-
-/** 회원가입 요청 DTO */
-export interface SignUpRequestDto {
-  email: string;
-  password: string;
-  confirmPassword: string;
-  nickname: string;
-}
-
-/** 로그인 요청 DTO */
-export interface LoginRequestDto {
-  email: string;
-  password: string;
-}
 
 /** 사용자 정보 응답 DTO */
 export interface UserResponseDto {
@@ -49,12 +82,6 @@ export interface AuthUser {
 // ============================================
 // Board 관련 타입 정의
 // ============================================
-
-/** 게시글 생성 요청 DTO */
-export interface CreateBoardRequestDto {
-  title: string;
-  content: string;
-}
 
 /** 게시글 수정 요청 DTO */
 export interface UpdateBoardRequestDto {
@@ -107,12 +134,6 @@ export interface BoardDetailResponseDto extends BoardDetailDto {}
 // Reply 관련 타입 정의
 // ============================================
 
-/** 댓글 생성 요청 DTO */
-export interface CreateReplyRequestDto {
-  content: string;
-  boardId: number;
-}
-
 /** 댓글 수정 요청 DTO */
 export interface UpdateReplyRequestDto {
   content: string;
@@ -128,12 +149,18 @@ export interface ReplyDto {
   };
   createdAt: string;
   modifiedAt: string;
-  boardId: number;
+  boardId?: number;
 }
 
 /** 댓글 목록 응답 DTO */
 export interface ReplyListResponseDto {
   replies: ReplyDto[];
+  pagination: {
+    page: number;
+    pageSize: number;
+    totalCount: number;
+    totalPages: number;
+  };
 }
 
 // ============================================

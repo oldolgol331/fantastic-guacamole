@@ -70,7 +70,7 @@ export const BoardDetail = () => {
    */
   const createReplyMutation = useMutation({
     mutationFn: (content: string) =>
-      replyApi.createReply(boardId!, { content, boardId: boardId! }),
+      replyApi.createReply(boardId!, { content }),
     onSuccess: () => {
       setNewReply('');
       refetchReplies();

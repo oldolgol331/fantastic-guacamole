@@ -1,7 +1,7 @@
-import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useForm } from '../hooks/useForm';
+import { loginSchema } from '../types';
 import { Button, Input } from '../components';
 
 /**
@@ -11,11 +11,12 @@ import { Button, Input } from '../components';
 export const Login = () => {
   const navigate = useNavigate();
   const { handleLogin, isAuthenticated } = useAuth();
-  const { values, handleChange, errors, setError } = useForm({
-    email: '',
-    password: '',
-  });
-  const [isLoading, setIsLoading] = useState(false);
+
+  // Zod 스키마를 사용한 useForm
+  const { values, errors, handleChange, handleSubmit, isSubmitting } = useForm(
+    { email: '', password: '' },
+    loginSchema
+  );
 
   // 이미 로그인한 경우 홈으로 리다이렉트
   if (isAuthenticated) {
@@ -24,46 +25,10 @@ export const Login = () => {
   }
 
   /**
-   * 폼 유효성 검사
-   */
-  const validate = (): boolean => {
-    let isValid = true;
-
-    if (!values.email.trim()) {
-      setError('email', '이메일을 입력해주세요');
-      isValid = false;
-    } else if (!/\S+@\S+\.\S+/.test(values.email)) {
-      setError('email', '올바른 이메일 형식이 아닙니다');
-      isValid = false;
-    }
-
-    if (!values.password) {
-      setError('password', '비밀번호를 입력해주세요');
-      isValid = false;
-    } else if (values.password.length < 8) {
-      setError('password', '비밀번호는 8 자 이상이어야 합니다');
-      isValid = false;
-    }
-
-    return isValid;
-  };
-
-  /**
    * 로그인 제출 핸들러
    */
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validate()) return;
-
-    setIsLoading(true);
-    try {
-      await handleLogin(values.email, values.password);
-    } catch (error) {
-      // 에러는 useAuth 에서 처리됨
-    } finally {
-      setIsLoading(false);
-    }
+  const onSubmit = async () => {
+    await handleLogin(values.email, values.password);
   };
 
   return (
@@ -77,7 +42,13 @@ export const Login = () => {
             환영합니다!
           </p>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit(onSubmit);
+            }}
+            className="flex flex-col gap-5"
+          >
             <Input
               label="이메일"
               type="email"
@@ -87,7 +58,7 @@ export const Login = () => {
               error={errors.email}
               placeholder="email@example.com"
               autoComplete="email"
-              disabled={isLoading}
+              disabled={isSubmitting}
             />
 
             <Input
@@ -99,7 +70,7 @@ export const Login = () => {
               error={errors.password}
               placeholder="••••••••"
               autoComplete="current-password"
-              disabled={isLoading}
+              disabled={isSubmitting}
             />
 
             <Button
@@ -107,7 +78,7 @@ export const Login = () => {
               variant="primary"
               size="lg"
               fullWidth
-              loading={isLoading}
+              loading={isSubmitting}
             >
               로그인
             </Button>

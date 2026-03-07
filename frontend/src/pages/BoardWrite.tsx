@@ -4,6 +4,7 @@ import { boardApi } from '../services';
 import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../hooks/useToast';
 import { useForm } from '../hooks/useForm';
+import { createBoardSchema } from '../types';
 import { Button, Input, Textarea } from '../components';
 
 /**
@@ -14,10 +15,12 @@ export const BoardWrite = () => {
   const navigate = useNavigate();
   const { requireAuth } = useAuth();
   const { showSuccess, showError } = useToast();
-  const { values, handleChange, errors, setError, setErrors } = useForm({
-    title: '',
-    content: '',
-  });
+
+  // Zod 스키마를 사용한 useForm
+  const { values, errors, handleChange, handleSubmit, isSubmitting } = useForm(
+    { title: '', content: '' },
+    createBoardSchema
+  );
 
   // 인증 확인
   if (!requireAuth()) {
@@ -40,36 +43,9 @@ export const BoardWrite = () => {
   });
 
   /**
-   * 폼 유효성 검사
-   */
-  const validate = (): boolean => {
-    let isValid = true;
-    setErrors({});
-
-    if (!values.title.trim()) {
-      setError('title', '제목을 입력해주세요');
-      isValid = false;
-    } else if (values.title.length > 100) {
-      setError('title', '제목은 100 자 이하로 입력해주세요');
-      isValid = false;
-    }
-
-    if (!values.content.trim()) {
-      setError('content', '내용을 입력해주세요');
-      isValid = false;
-    }
-
-    return isValid;
-  };
-
-  /**
    * 제출 핸들러
    */
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validate()) return;
-
+  const onSubmit = async () => {
     createMutation.mutate({
       title: values.title,
       content: values.content,
@@ -83,7 +59,13 @@ export const BoardWrite = () => {
           새 게시글 작성
         </h1>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit(onSubmit);
+          }}
+          className="flex flex-col gap-5"
+        >
           <Input
             label="제목"
             name="title"
@@ -91,7 +73,7 @@ export const BoardWrite = () => {
             onChange={handleChange}
             error={errors.title}
             placeholder="제목을 입력하세요"
-            disabled={createMutation.isPending}
+            disabled={isSubmitting || createMutation.isPending}
             maxLength={100}
           />
 
@@ -102,7 +84,7 @@ export const BoardWrite = () => {
             onChange={handleChange}
             error={errors.content}
             placeholder="내용을 입력하세요"
-            disabled={createMutation.isPending}
+            disabled={isSubmitting || createMutation.isPending}
             rows={10}
           />
 
@@ -111,14 +93,14 @@ export const BoardWrite = () => {
               type="button"
               variant="ghost"
               onClick={() => navigate(-1)}
-              disabled={createMutation.isPending}
+              disabled={isSubmitting || createMutation.isPending}
             >
               취소
             </Button>
             <Button
               type="submit"
               variant="primary"
-              loading={createMutation.isPending}
+              loading={isSubmitting || createMutation.isPending}
             >
               작성하기
             </Button>

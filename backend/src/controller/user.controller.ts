@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { LoginRequestDto, SignUpRequestDto } from "../dto/user.dto.js";
+import { signUpSchema, loginSchema, updateUserSchema } from "../dto/user.dto.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 import { userService } from "../service/user.service.js";
 
@@ -7,7 +7,8 @@ export const userRouter = Router();
 
 userRouter.post("/signup", async (req: Request, res: Response) => {
   try {
-    const signUpDto: SignUpRequestDto = req.body;
+    // Zod 검증
+    const signUpDto = signUpSchema.parse(req.body);
 
     const result = await userService.signUp(signUpDto);
 
@@ -22,7 +23,8 @@ userRouter.post("/signup", async (req: Request, res: Response) => {
 
 userRouter.post("/login", async (req: Request, res: Response) => {
   try {
-    const loginDto: LoginRequestDto = req.body;
+    // Zod 검증
+    const loginDto = loginSchema.parse(req.body);
 
     const result = await userService.login(loginDto);
 
@@ -54,12 +56,14 @@ userRouter.patch("/me", authMiddleware, async (req: Request, res: Response) => {
   try {
     const userId = req.user!.id;
 
-    const { nickname, newPassword } = req.body;
+    // Zod 검증
+    const { nickname, newPassword, confirmNewPassword } = updateUserSchema.parse(req.body);
 
     const result = await userService.updateMyInfo(
       userId,
       nickname,
       newPassword,
+      confirmNewPassword,
     );
 
     res.status(200).json({

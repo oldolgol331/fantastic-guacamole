@@ -1,8 +1,8 @@
-import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { userApi } from '../services';
 import { useToast } from '../hooks/useToast';
 import { useForm } from '../hooks/useForm';
+import { signUpSchema } from '../types';
 import { Button, Input } from '../components';
 
 /**
@@ -12,66 +12,22 @@ import { Button, Input } from '../components';
 export const Signup = () => {
   const navigate = useNavigate();
   const { showSuccess, showError } = useToast();
-  const { values, handleChange, errors, setError, setErrors } = useForm({
-    email: '',
-    nickname: '',
-    password: '',
-    confirmPassword: '',
-  });
-  const [isLoading, setIsLoading] = useState(false);
 
-  /**
-   * 폼 유효성 검사
-   */
-  const validate = (): boolean => {
-    let isValid = true;
-    setErrors({});
-
-    // 이메일 검증
-    if (!values.email.trim()) {
-      setError('email', '이메일을 입력해주세요');
-      isValid = false;
-    } else if (!/\S+@\S+\.\S+/.test(values.email)) {
-      setError('email', '올바른 이메일 형식이 아닙니다');
-      isValid = false;
-    }
-
-    // 닉네임 검증
-    if (!values.nickname.trim()) {
-      setError('nickname', '닉네임을 입력해주세요');
-      isValid = false;
-    } else if (values.nickname.length < 2 || values.nickname.length > 20) {
-      setError('nickname', '닉네임은 2~20 자 사이여야 합니다');
-      isValid = false;
-    }
-
-    // 비밀번호 검증
-    if (!values.password) {
-      setError('password', '비밀번호를 입력해주세요');
-      isValid = false;
-    } else if (values.password.length < 8) {
-      setError('password', '비밀번호는 8 자 이상이어야 합니다');
-      isValid = false;
-    }
-
-    // 비밀번호 확인 검증
-    if (values.password !== values.confirmPassword) {
-      setError('confirmPassword', '비밀번호가 일치하지 않습니다');
-      isValid = false;
-    }
-
-    return isValid;
-  };
+  // Zod 스키마를 사용한 useForm
+  const { values, errors, handleChange, handleSubmit, isSubmitting } = useForm(
+    {
+      email: '',
+      nickname: '',
+      password: '',
+      confirmPassword: '',
+    },
+    signUpSchema
+  );
 
   /**
    * 회원가입 제출 핸들러
    */
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validate()) return;
-
-    setIsLoading(true);
+  const onSubmit = async () => {
     try {
       await userApi.signUp({
         email: values.email,
@@ -89,8 +45,6 @@ export const Signup = () => {
       } else {
         showError('회원가입 중 오류가 발생했습니다.');
       }
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -105,7 +59,13 @@ export const Signup = () => {
             새로운 계정을 만들어보세요
           </p>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit(onSubmit);
+            }}
+            className="flex flex-col gap-5"
+          >
             <Input
               label="이메일"
               type="email"
@@ -115,7 +75,7 @@ export const Signup = () => {
               error={errors.email}
               placeholder="email@example.com"
               autoComplete="email"
-              disabled={isLoading}
+              disabled={isSubmitting}
             />
 
             <Input
@@ -127,7 +87,7 @@ export const Signup = () => {
               error={errors.nickname}
               placeholder="닉네임"
               autoComplete="nickname"
-              disabled={isLoading}
+              disabled={isSubmitting}
             />
 
             <Input
@@ -139,7 +99,7 @@ export const Signup = () => {
               error={errors.password}
               placeholder="••••••••"
               autoComplete="new-password"
-              disabled={isLoading}
+              disabled={isSubmitting}
             />
 
             <Input
@@ -151,7 +111,7 @@ export const Signup = () => {
               error={errors.confirmPassword}
               placeholder="••••••••"
               autoComplete="new-password"
-              disabled={isLoading}
+              disabled={isSubmitting}
             />
 
             <Button
@@ -159,7 +119,7 @@ export const Signup = () => {
               variant="primary"
               size="lg"
               fullWidth
-              loading={isLoading}
+              loading={isSubmitting}
             >
               회원가입
             </Button>
