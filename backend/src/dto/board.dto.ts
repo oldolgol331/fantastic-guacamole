@@ -21,6 +21,9 @@ export const boardListQuerySchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   pageSize: z.coerce.number().int().positive().max(100).default(10),
   search: z.string().optional(),
+  authorId: z.coerce.number().int().positive().optional(),
+  sortBy: z.enum(['createdAt', 'views', 'replies']).optional().default('createdAt'),
+  order: z.enum(['asc', 'desc']).optional().default('desc'),
 });
 
 // ============================================

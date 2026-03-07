@@ -13,14 +13,16 @@ export const BoardList = () => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState<'createdAt' | 'views' | 'replies'>('createdAt');
+  const [order, setOrder] = useState<'asc' | 'desc'>('desc');
   const pageSize = 10;
 
   /**
    * TanStack Query 를 사용한 게시글 목록 조회
    */
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['boards', page, searchTerm],
-    queryFn: () => boardApi.getBoards(page, pageSize, searchTerm || undefined),
+    queryKey: ['boards', page, searchTerm, sortBy, order],
+    queryFn: () => boardApi.getBoards(page, pageSize, searchTerm || undefined, sortBy, order),
   });
 
   /**
@@ -68,18 +70,37 @@ export const BoardList = () => {
         </Link>
       </div>
 
-      {/* 검색 폼 */}
-      <form onSubmit={handleSearch} className="flex gap-3 mb-6">
+      {/* 고급 검색 필터 */}
+      <form onSubmit={handleSearch} className="flex flex-wrap gap-3 mb-6">
         <Input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="검색어를 입력하세요..."
-          className="flex-1"
+          className="flex-1 min-w-[200px]"
         />
         <Button type="submit" variant="secondary">
           검색
         </Button>
+        
+        {/* 정렬 옵션 */}
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value as 'createdAt' | 'views' | 'replies')}
+          className="px-4 py-2 border border-[var(--color-border)] rounded-lg bg-[var(--color-bg-primary)] text-[var(--color-text-primary)]"
+        >
+          <option value="createdAt">최신순</option>
+          <option value="views">조회순</option>
+          <option value="replies">댓글순</option>
+        </select>
+        
+        <button
+          type="button"
+          onClick={() => setOrder(order === 'desc' ? 'asc' : 'desc')}
+          className="px-4 py-2 border border-[var(--color-border)] rounded-lg bg-[var(--color-bg-primary)] text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] transition-all"
+        >
+          {order === 'desc' ? '↓' : '↑'}
+        </button>
       </form>
 
       {/* 게시글 목록 */}

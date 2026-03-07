@@ -16,15 +16,17 @@ export const boardApi = {
   getBoards: async (
     page: number = 1,
     pageSize: number = 10,
-    search?: string
+    search?: string,
+    sortBy?: 'createdAt' | 'views' | 'replies',
+    order?: 'asc' | 'desc'
   ): Promise<BoardListResponseDto> => {
     const params = new URLSearchParams({
       page: page.toString(),
       pageSize: pageSize.toString(),
     });
-    if (search) {
-      params.append('search', search);
-    }
+    if (search) params.append('search', search);
+    if (sortBy) params.append('sortBy', sortBy);
+    if (order) params.append('order', order);
 
     const response = await apiClient.get(`/boards?${params.toString()}`);
     return response.data.data;

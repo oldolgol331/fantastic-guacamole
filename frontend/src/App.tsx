@@ -5,6 +5,7 @@ import {
   Header,
   Toast,
   LoadingSpinner,
+  ErrorBoundary,
 } from './components';
 import {
   Home,
@@ -72,24 +73,26 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
  */
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthInitializer>
-        <BrowserRouter>
-          <Layout>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/boards" element={<BoardList />} />
-              <Route path="/boards/:id" element={<BoardDetail />} />
-              <Route path="/boards/write" element={<BoardWrite />} />
-              <Route path="/boards/:id/edit" element={<BoardEdit />} />
-              <Route path="/mypage" element={<MyPage />} />
-            </Routes>
-          </Layout>
-        </BrowserRouter>
-      </AuthInitializer>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <AuthInitializer>
+          <BrowserRouter>
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/boards" element={<BoardList />} />
+                <Route path="/boards/:id" element={<BoardDetail />} />
+                <Route path="/boards/write" element={<BoardWrite />} />
+                <Route path="/boards/:id/edit" element={<BoardEdit />} />
+                <Route path="/mypage" element={<MyPage />} />
+              </Routes>
+            </Layout>
+          </BrowserRouter>
+        </AuthInitializer>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 

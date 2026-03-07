@@ -5,6 +5,7 @@ import {
   replyListQuerySchema,
 } from "../dto/reply.dto.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
+import { replyLimiter } from "../middleware/rateLimit.middleware.js";
 import { replyService } from "../service/reply.service.js";
 
 export const replyRouter = Router();
@@ -36,6 +37,7 @@ replyRouter.get(
 replyRouter.post(
   "/boards/:boardId/replies",
   authMiddleware,
+  replyLimiter,
   async (req: Request, res: Response) => {
     try {
       const userId = req.user!.id;

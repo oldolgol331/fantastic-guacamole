@@ -5,6 +5,7 @@ import {
   boardListQuerySchema,
 } from "../dto/board.dto.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
+import { postLimiter } from "../middleware/rateLimit.middleware.js";
 import { boardService } from "../service/board.service.js";
 
 export const boardRouter = Router();
@@ -13,8 +14,20 @@ boardRouter.get("/", async (req: Request, res: Response) => {
   try {
     // Zod 쿼리 검증
     const { page, pageSize, search } = boardListQuerySchema.parse(req.query);
+    
+    // 추가 검색 옵션
+    const authorId = req.query.authorId ? parseInt(req.query.authorId as string, 10) : undefined;
+    const sortBy = req.query.sortBy as 'createdAt' | 'views' | 'replies' | undefined;
+    const order = req.query.order as 'asc' | 'desc' | undefined;
 
-    const result = await boardService.getBoards(page, pageSize, search);
+    const result = await boardService.getBoards({
+      page,
+      pageSize,
+      search,
+      authorId,
+      sortBy,
+      order,
+    });
 
     res.status(200).json({
       success: true,
@@ -43,7 +56,7 @@ boardRouter.get("/:id", async (req: Request, res: Response) => {
   }
 });
 
-boardRouter.post("/", authMiddleware, async (req: Request, res: Response) => {
+boardRouter.post("/", authMiddleware, postLimiter, async (req: Request, res: Response) => {
   try {
     const userId = req.user!.id;
 

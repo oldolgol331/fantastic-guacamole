@@ -13,3 +13,4 @@ export { LoadingSpinner } from './LoadingSpinner';
 export type { LoadingSpinnerProps } from './LoadingSpinner';
 export { PasswordStrength, CharacterCounter } from './PasswordStrength';
 export type { PasswordStrengthProps, CharacterCounterProps } from './PasswordStrength';
+export { ErrorBoundary } from './ErrorBoundary';

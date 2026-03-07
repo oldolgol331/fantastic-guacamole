@@ -8,45 +8,66 @@ import {
 import { HttpError } from "../middleware/error.middleware.js";
 import { prisma } from "../repository/prisma.client.js";
 
+export interface BoardSearchOptions {
+  page: number;
+  pageSize: number;
+  search?: string;
+  authorId?: number;
+  sortBy?: 'createdAt' | 'views' | 'replies';
+  order?: 'asc' | 'desc';
+}
+
 export class BoardService {
-  async getBoards(
-    page: number = 1,
-    pageSize: number = 10,
-    search?: string,
-  ): Promise<BoardListResponseDto> {
-    const whereCondition = search
-      ? {
-          OR: [
-            { title: { contains: search } },
-            { content: { contains: search } },
-          ],
-        }
-      : {};
+  async getBoards(options: BoardSearchOptions): Promise<BoardListResponseDto> {
+    const { 
+      page, 
+      pageSize, 
+      search, 
+      authorId,
+      sortBy = 'createdAt', 
+      order = 'desc' 
+    } = options;
 
-    const totalCount = await prisma.board.count({
-      where: whereCondition,
-    });
+    const whereCondition: any = {};
 
-    const boards = await prisma.board.findMany({
-      where: whereCondition,
-      include: {
-        author: {
-          select: {
-            nickname: true,
+    // 검색어
+    if (search) {
+      whereCondition.OR = [
+        { title: { contains: search } },
+        { content: { contains: search } },
+        { author: { nickname: { contains: search } } },
+      ];
+    }
+
+    // 작성자 필터
+    if (authorId) {
+      whereCondition.authorId = authorId;
+    }
+
+    // 정렬
+    const orderBy = { [sortBy]: order };
+
+    const [totalCount, boards] = await Promise.all([
+      prisma.board.count({ where: whereCondition }),
+      prisma.board.findMany({
+        where: whereCondition,
+        include: {
+          author: {
+            select: {
+              nickname: true,
+            },
+          },
+          replies: {
+            select: {
+              id: true,
+            },
           },
         },
-        replies: {
-          select: {
-            id: true,
-          },
-        },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-      skip: (page - 1) * pageSize,
-      take: pageSize,
-    });
+        orderBy,
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+    ]);
 
     const boardSummaries: BoardSummaryDto[] = boards.map((board) => ({
       id: board.id,

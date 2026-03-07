@@ -5,6 +5,8 @@ import { corsConfig } from "./config/cors.config.js";
 import { boardRouter } from "./controller/board.controller.js";
 import { replyRouter } from "./controller/reply.controller.js";
 import { userRouter } from "./controller/user.controller.js";
+import { healthRouter } from "./controller/health.controller.js";
+import { apiLimiter, authLimiter } from "./middleware/rateLimit.middleware.js";
 import { errorMiddleware } from "./middleware/error.middleware.js";
 import { disconnectPrisma } from "./repository/prisma.client.js";
 
@@ -16,6 +18,12 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(cors(corsConfig));
 
+// Rate Limiting 적용
+app.use('/api', apiLimiter); // 전체 API 제한
+app.use('/api/users', authLimiter); // 인증 관련 더 엄격하게
+
+// 헬스체크 엔드포인트 (Rate Limiting 제외)
+app.use('/health', healthRouter);
 app.get("/health", (_req: Request, res: Response) => {
   res.json({
     status: "ok",
